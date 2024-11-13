@@ -47,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@v4  # Using the latest version
         with:
           name: mcMMO Artifacts
-          path: ./mcMMO  # Ensure this path is correct
+          path: ./mcMMO/target/mcMMO.jar  # Ensure this path is correct
 
       - name: Auto Release
         uses: marvinpinto/action-automatic-releases@latest  # Using the latest stable version
@@ -55,5 +55,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: latest
           prerelease: false
-          files: ./mcMMO
+          files: ./mcMMO/target/mcMMO.jar
       
