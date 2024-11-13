@@ -18,37 +18,36 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Clone Repository
-        run: git clone --branch master https://github.com/Auxilor/EcoEnchants.git
-      
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v3
-      
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        run: git clone --branch master https://github.com/mcMMO-Dev/mcMMO.git
       
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: 'adopt'
+          java-version: '17'
       
       - name: Configure Git User Details
-      
         run: |
-          cd EcoEnchants
+          cd mcMMO
           git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
-      
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - name: Build
         run: |
-          cd EcoEnchants
-          chmod +x ./gradlew
-          ./gradlew shadowJar
+          cd mcMMO
+          mvn verify -B --file pom.xml -DdisableXmlReport=true
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4  # Using the latest version
         with:
-          name: EcoEnchants Artifacts
-          path: ./EcoEnchants/build/libs  # Ensure this path is correct
+          name: mcMMO Artifacts
+          path: ./mcMMO  # Ensure this path is correct
 
       - name: Auto Release
         uses: marvinpinto/action-automatic-releases@latest  # Using the latest stable version
@@ -56,4 +55,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: latest
           prerelease: false
-          files: ./EcoEnchants/build/libs
+          files: ./mcMMO
+      
